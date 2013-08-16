@@ -7,6 +7,10 @@ App.myController = Ember.PageableController.create();
 
 // add content
 
+// initialize sort settings
+App.myController.set('sortProperties', [ 'id' ]);
+App.myController.set('sortAscending', false);
+
 // initialize page settings
 App.myController.set('pageNumber', 2);
 App.myController.set('pageSize', 10);
