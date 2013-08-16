@@ -10,6 +10,8 @@ var get = Ember.get,
   });
 
   controller.set('pageSize', 2);
+  
+  {{#each item in controller.pagedContent}}{{item}}{{/each}}
 
   ```
 
@@ -30,9 +32,9 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     /**
      * Gets number of pages.
      */
-    pageCount: Ember.computed('content.length', 'pageSize', function () {
+    pageCount: Ember.computed('arrangedContent.length', 'pageSize', function () {
 
-        return Math.ceil(get(this, 'content.length') /
+        return Math.ceil(get(this, 'arrangedContent.length') /
             get(this, 'pageSize'));
 
     }).cacheable(),
@@ -43,7 +45,7 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
         // setting page back to 0
 
         set(this, 'pageNumber', 0);
-    }, 'pageSize', 'content'),
+    }, 'pageSize', 'arrangedContent'),
 
     contentArrayDidChange: function(array, idx, removedCount, addedCount) {
         var pageNumber = get(this, 'pageNumber');
@@ -59,8 +61,8 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
         return this._super(array, idx, removedCount, addedCount);
     },
 
-    arrangedContent: Ember.computed('_viewChanged', 'content', 'pageNumber', 'pageSize', function () {
-        var content = get(this, 'content');
+    pagedContent: Ember.computed('_viewChanged', 'arrangedContent', 'pageNumber', 'pageSize', function () {
+        var content = get(this, 'arrangedContent');
         if (! content) {
             return Ember.A([]);
         }
@@ -102,3 +104,4 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     }).cacheable()
 });
 
+Ember.PageableController = Ember.ArrayController.extend(Ember.PageableMixin, {});
