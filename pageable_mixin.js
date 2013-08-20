@@ -10,8 +10,6 @@ var get = Ember.get,
   });
 
   controller.set('pageSize', 2);
-  
-  {{#each item in controller.pagedContent}}{{item}}{{/each}}
 
   ```
 
@@ -39,6 +37,21 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
 
     }).cacheable(),
 
+    pages: function() {
+
+      var pageCount = this.get('pageCount'),
+      pages = [],
+      page;
+
+      for (i = 0; i < pageCount; i++) {
+        page = i + 1;
+        pages.push(page);
+      }
+
+      return pages;
+
+    }.property('pageCount'),
+    
     _resetPageToZero: Ember.observer(function () {
         // what does it mean for page size to change and for us to be on
         // page X? there is no way to figure this out, so we default to
@@ -76,7 +89,7 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
     /**
      * Decrements pageNumber. If pageNumber is already 0, does nothing.
      */
-    decrementPage: function (event) {
+    decrementPage: function () {
         this.set('pageNumber', Math.max(get(this, 'pageNumber') - 1, 0));
     },
 
@@ -87,6 +100,13 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
         set(this, 'pageNumber', Math.min(
                     get(this, 'pageNumber') + 1,
                     get(this, 'pageCount') - 1));
+    },
+
+    /**
+     * Set pageNumber to visible page value (pageNumber - 1).
+     */
+    setPage: function (pageNumber) {
+      set(this, 'pageNumber', parseInt(pageNumber, 10) - 1);
     },
 
     /**
@@ -101,7 +121,7 @@ Ember.PageableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
      */
     onLastPage: Ember.computed('pageNumber', 'pageCount', function () {
         return get(this, 'pageNumber') === get(this, 'pageCount') - 1;
-    }).cacheable()
+  }).cacheable()
 });
 
 Ember.PageableController = Ember.ArrayController.extend(Ember.PageableMixin, {});
